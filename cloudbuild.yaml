@@ -11,7 +11,7 @@ steps:
       - --runtime=python312
       - --trigger-http
       - --region=europe-west4
-      - --set-env-vars=MATTERMOST_WEBHOOK_URL=$$_MATTERMOST_WEBHOOK_URL
+      - --set-env-vars=MATTERMOST_WEBHOOK_URL=$_MATTERMOST_WEBHOOK_URL
       - --service-account=$_SERVICE_ACCOUNT_EMAIL
 
   # Deploy fridge duty function
@@ -26,7 +26,7 @@ steps:
       - --runtime=python312
       - --trigger-http
       - --region=europe-west4
-      - --set-env-vars=MATTERMOST_WEBHOOK_URL=$$_MATTERMOST_WEBHOOK_URL
+      - --set-env-vars=MATTERMOST_WEBHOOK_URL=$_MATTERMOST_WEBHOOK_URL
       - --service-account=$_SERVICE_ACCOUNT_EMAIL
 
 options:
