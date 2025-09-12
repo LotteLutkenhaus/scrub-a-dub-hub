@@ -1,5 +1,5 @@
 import logging
-from typing import List, Optional
+from typing import List, Optional, Any, Generator
 from contextlib import contextmanager
 from datetime import datetime
 from sqlalchemy import create_engine, Column, Integer, String, Boolean, DateTime, ForeignKey
@@ -46,7 +46,7 @@ def get_database_url(test_mode: bool = False) -> str:
 
 
 @contextmanager
-def get_db_session(test_mode: bool = False) -> Session:
+def get_db_session(test_mode: bool = False) -> Generator[Session, Any, None]:
     """
     Context manager for database sessions.
     """
