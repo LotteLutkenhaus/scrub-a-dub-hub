@@ -123,9 +123,11 @@ def assign_coffee_duty(request):
     request_json = request.get_json(silent=True) or {}
     test_mode = request_json.get("test_mode", True)
 
-    if not test_mode:
-        # Check if it's execution week
-        if not is_coffee_execution_week():
+    # Check if it's execution week
+    if not is_coffee_execution_week():
+        if test_mode:
+            logger.info("Would not have assigned coffee duty this week.")
+        else:
             return {"status": "success", "message": "Not assigning coffee duty this week."}, 200
 
     logger.info(f"Coffee duty assignment process started (test mode = {test_mode})")
@@ -144,9 +146,11 @@ def assign_fridge_duty(request):
     request_json = request.get_json(silent=True) or {}
     test_mode = request_json.get("test_mode", True)
 
-    if not test_mode:
-        # Check if it's execution week
-        if not is_fridge_execution_week():
+    # Check if it's execution week
+    if not is_fridge_execution_week():
+        if test_mode:
+            logger.info("Would not have assigned fridge duty this week.")
+        else:
             return {"status": "success", "message": "Not executing fridge duty this week."}, 200
 
     logger.info(f"Fridge duty assignment process started (test mode = {test_mode})")
