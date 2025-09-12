@@ -10,8 +10,7 @@ steps:
       - --entry-point=assign_coffee_duty
       - --runtime=python312
       - --trigger-http
-      - --allow-unauthenticated
-      - --region=us-central1
+      - --region=europe-west4
       - --set-env-vars=MATTERMOST_WEBHOOK_URL=$$_MATTERMOST_WEBHOOK_URL
 
   # Deploy fridge duty function
@@ -25,8 +24,7 @@ steps:
       - --entry-point=assign_fridge_duty
       - --runtime=python312
       - --trigger-http
-      - --allow-unauthenticated
-      - --region=us-central1
+      - --region=europe-west4
       - --set-env-vars=MATTERMOST_WEBHOOK_URL=$$_MATTERMOST_WEBHOOK_URL
 
 options:

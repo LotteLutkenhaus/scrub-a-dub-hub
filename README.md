@@ -58,6 +58,7 @@ duty_assignments (
    - `Cloud Functions Developer` (deploy functions)  
    - `Cloud Run Invoker` (invoke services)
    - `Cloud Run Service Invoker` (service-to-service calls)
+   - `Cloud Run Admin` (configure services)
    - `Cloud Scheduler Job Runner` (for scheduled triggers)
    - `Secret Manager Secret Accessor` (access webhook URL)
    - `Service Account User` (run ops as the service account)
@@ -150,7 +151,8 @@ Schedule these Cloud Functions to run weekly:
      --schedule="0 16 * * 2" \
      --uri=YOUR_COFFEE_FUNCTION_URL \
      --http-method=POST \
-     --message-body='{"test_mode": false}'
+     --message-body='{"test_mode": false}' \
+     --oidc-service-account-email=<SERVICE_ACCOUNT_NAME>@YOUR_PROJECT.iam.gserviceaccount.com
    ```
 
 2. **Fridge Duty**: Every Wednesday (checks if last of month)
@@ -160,4 +162,6 @@ Schedule these Cloud Functions to run weekly:
      --uri=YOUR_FRIDGE_FUNCTION_URL \
      --http-method=POST \
      --message-body='{"test_mode": false}'
+      --message-body='{"test_mode": false}' \
+     --oidc-service-account-email=<SERVICE_ACCOUNT_NAME>@YOUR_PROJECT.iam.gserviceaccount.com
    ```
