@@ -1,0 +1,33 @@
+steps:
+  # Deploy coffee duty function
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    args:
+      - gcloud
+      - functions
+      - deploy
+      - assign_coffee_duty
+      - --source=.
+      - --entry-point=assign_coffee_duty
+      - --runtime=python312
+      - --trigger-http
+      - --allow-unauthenticated
+      - --region=us-central1
+      - --set-env-vars=MATTERMOST_WEBHOOK_URL=$$MATTERMOST_WEBHOOK_URL
+
+  # Deploy fridge duty function
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    args:
+      - gcloud
+      - functions
+      - deploy
+      - assign_fridge_duty
+      - --source=.
+      - --entry-point=assign_fridge_duty
+      - --runtime=python312
+      - --trigger-http
+      - --allow-unauthenticated
+      - --region=us-central1
+      - --set-env-vars=MATTERMOST_WEBHOOK_URL=$$MATTERMOST_WEBHOOK_URL
+
+substitutions:
+  _MATTERMOST_WEBHOOK_URL: ${_MATTERMOST_WEBHOOK_URL}
