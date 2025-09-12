@@ -5,7 +5,7 @@ members for Channable's US office.
 
 ## Overview
 
-This is a Python-based Google Cloud Functions application that:
+This is a Python-based Google Cloud Run functions application that:
 - Assigns coffee machine cleaning duties biweekly (odd weeks)
 - Assigns fridge cleaning duties monthly (last Wednesday of the month)
 - Sends notifications via Mattermost webhooks
@@ -46,19 +46,30 @@ duty_assignments (
 
 ### Prerequisites
 
-1. **Google Cloud Project** with enabled APIs:
+1. **Google Cloud Project** with enabled **APIs**:
    - Cloud Functions
+   - Cloud Run
+   - Cloud Resource Manager
    - Secret Manager
    - Cloud Build (for GitHub integration)
 
-2. **Neon PostgreSQL Database**:
+2. **Service Account Permissions**: The Cloud Build service account needs these roles:
+   - `Cloud Build Service Account` (build execution)
+   - `Cloud Functions Developer` (deploy functions)  
+   - `Cloud Run Invoker` (invoke services)
+   - `Cloud Run Service Invoker` (service-to-service calls)
+   - `Cloud Scheduler Job Runner` (for scheduled triggers)
+   - `Secret Manager Secret Accessor` (access webhook URL)
+   - `Logs Writer` (write build logs)
+
+3. **Neon PostgreSQL Database**:
    - Sign up at [neon.tech](https://neon.tech)
    - Create database with schema above
    - Store connection strings in Secret Manager:
      - `neon-database-connection-string` (production)
      - `neon-database-connection-string-dev` (development)
 
-3. **Mattermost Webhook URL**:
+4. **Mattermost Webhook URL**:
    - Create incoming webhook in Mattermost
    - Set as environment variable during deployment
 
