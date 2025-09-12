@@ -60,6 +60,7 @@ duty_assignments (
    - `Cloud Run Service Invoker` (service-to-service calls)
    - `Cloud Scheduler Job Runner` (for scheduled triggers)
    - `Secret Manager Secret Accessor` (access webhook URL)
+   - `Service Account User` (run ops as the service account)
    - `Logs Writer` (write build logs)
 
 3. **Neon PostgreSQL Database**:
