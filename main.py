@@ -5,9 +5,9 @@ import random
 import functions_framework
 
 from database import (
-    get_office_members, 
-    get_current_cycle_info, 
-    start_new_cycle, 
+    get_office_members,
+    get_current_cycle_info,
+    start_new_cycle,
     record_duty_assignment
 )
 from models import OfficeMember, DutyType
@@ -65,27 +65,29 @@ def _assign_duty(duty_type: DutyType, test_mode: bool = False):
 
     # Create member lookup
     member_lookup = {member.id: member for member in members}
-    current_member_ids = set(member_lookup.keys())
+    all_member_ids = set(member_lookup.keys())
 
     # Get cycle info
     cycle_info = get_current_cycle_info(duty_type, test_mode)
-    available_user_ids = list(current_member_ids - cycle_info.assigned_member_ids)
+    available_user_ids = list(all_member_ids - cycle_info.assigned_member_ids)
 
     # Start new cycle if needed
     if not available_user_ids:
         logger.info(f"All users have had a turn for {duty_name}. Starting new cycle.")
         cycle_info = start_new_cycle(duty_type, test_mode)
-        available_user_ids = list(current_member_ids)
+        available_user_ids = list(all_member_ids)
 
         if not available_user_ids:
             logger.error(f"No users available for {duty_name} even after cycle reset.")
-            return {"status": "error", "message": f"No users available for {duty_name} after cycle reset."}, 500
+            return {"status": "error",
+                    "message": f"No users available for {duty_name} after cycle reset."}, 500
 
     # Select random user
     selected_user_id = random.choice(available_user_ids)
     selected_member = member_lookup[selected_user_id]
-    
-    logger.info(f"Selected user for {duty_name}: {selected_member.username} (ID: {selected_user_id})")
+
+    logger.info(
+        f"Selected user for {duty_name}: {selected_member.username} (ID: {selected_user_id})")
 
     # Send notification
     if not notification_func(selected_member.username, test_mode=test_mode):
@@ -105,7 +107,8 @@ def _assign_duty(duty_type: DutyType, test_mode: bool = False):
         return {"status": "error", "message": result.message}, 500
 
     logger.info(f"{duty_name} assignment process completed successfully.")
-    return {"status": "success", "message": f"Assigned {duty_name} to {selected_member.username}."}, 200
+    return {"status": "success",
+            "message": f"Assigned {duty_name} to {selected_member.username}."}, 200
 
 
 @functions_framework.http
@@ -123,8 +126,8 @@ def assign_coffee_duty(request):
 
     request_json = request.get_json(silent=True) or {}
     test_mode = request_json.get("test_mode", True)
-    
-    logger.info(f"Coffee duty assignment process started in test_mode={test_mode}")
+
+    logger.info(f"Coffee duty assignment process started (test mode = {test_mode})")
     return _assign_duty(DutyType.COFFEE, test_mode)
 
 
@@ -143,6 +146,6 @@ def assign_fridge_duty(request):
 
     request_json = request.get_json(silent=True) or {}
     test_mode = request_json.get("test_mode", True)
-    
-    logger.info(f"Fridge duty assignment process started in test_mode={test_mode}")
+
+    logger.info(f"Fridge duty assignment process started (test mode = {test_mode})")
     return _assign_duty(DutyType.FRIDGE, test_mode)

@@ -7,6 +7,7 @@ class DutyType(StrEnum):
     COFFEE = "coffee"
     FRIDGE = "fridge"
 
+
 class OfficeMember(BaseModel):
     id: int
     username: str
@@ -32,5 +33,3 @@ class CycleInfo(BaseModel):
 class AssignmentResult(BaseModel):
     success: bool
     message: str
-    assignment: DutyAssignment | None = None
-    
