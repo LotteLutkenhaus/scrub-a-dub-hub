@@ -65,23 +65,18 @@ duty_assignments (
 ### Automated Deployment (GitHub)
 
 1. **Connect GitHub to Cloud Build**:
-   ```bash
-   # In Google Cloud Console: Cloud Build > Triggers
-   # Click "Connect Repository" and authorize GitHub
-   ```
+   - Go to Google Cloud Console → Cloud Build → Triggers
+   - Click "Create Trigger"
+   - Connect your GitHub repository
+   - Select "Cloud Build configuration file"
+   - Point to `cloudbuild.yaml`
+   - Set trigger to run on pushes to `main` branch
 
-2. **Create Build Trigger**:
-   ```bash
-   gcloud builds triggers create github \
-     --repo-name=java-janitor \
-     --repo-owner=YOUR_GITHUB_USERNAME \
-     --branch-pattern="^main$" \
-     --build-config=cloudbuild.yaml
-   ```
+2. **Configure Environment Variables**:
+   - In trigger settings, add substitution variable: `_MATTERMOST_WEBHOOK_URL`
+   - Set the value to your Mattermost webhook URL
 
-3. **Configure Secrets**: Add `MATTERMOST_WEBHOOK_URL` as substitution variable in trigger settings
-
-Now pushing to `main` automatically deploys both functions.
+Now pushing to `main` automatically deploys both Cloud Run functions (`assign-coffee-duty` and `assign-fridge-duty`).
 
 ## Local Development
 
