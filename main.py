@@ -120,12 +120,13 @@ def assign_coffee_duty(request):
     if request.method != "POST":
         return "Java Janitor is alive! Use POST to trigger.", 200
 
-    # Check if it's execution week
-    if not is_coffee_execution_week():
-        return {"status": "success", "message": "Not assigning coffee duty this week."}, 200
-
     request_json = request.get_json(silent=True) or {}
     test_mode = request_json.get("test_mode", True)
+
+    if not test_mode:
+        # Check if it's execution week
+        if not is_coffee_execution_week():
+            return {"status": "success", "message": "Not assigning coffee duty this week."}, 200
 
     logger.info(f"Coffee duty assignment process started (test mode = {test_mode})")
     return _assign_duty(DutyType.COFFEE, test_mode)
@@ -140,12 +141,13 @@ def assign_fridge_duty(request):
     if request.method != "POST":
         return "Fridge Warden is alive! Use POST to trigger.", 200
 
-    # Check if it's execution week
-    if not is_fridge_execution_week():
-        return {"status": "success", "message": "Not executing fridge duty this week."}, 200
-
     request_json = request.get_json(silent=True) or {}
     test_mode = request_json.get("test_mode", True)
+
+    if not test_mode:
+        # Check if it's execution week
+        if not is_fridge_execution_week():
+            return {"status": "success", "message": "Not executing fridge duty this week."}, 200
 
     logger.info(f"Fridge duty assignment process started (test mode = {test_mode})")
     return _assign_duty(DutyType.FRIDGE, test_mode)
