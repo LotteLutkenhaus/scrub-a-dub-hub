@@ -12,6 +12,7 @@ steps:
       - --trigger-http
       - --region=europe-west4
       - --set-env-vars=MATTERMOST_WEBHOOK_URL=$$_MATTERMOST_WEBHOOK_URL
+      - --service-account=$_SERVICE_ACCOUNT_EMAIL
 
   # Deploy fridge duty function
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
@@ -26,9 +27,11 @@ steps:
       - --trigger-http
       - --region=europe-west4
       - --set-env-vars=MATTERMOST_WEBHOOK_URL=$$_MATTERMOST_WEBHOOK_URL
+      - --service-account=$_SERVICE_ACCOUNT_EMAIL
 
 options:
   logging: CLOUD_LOGGING_ONLY
 
 substitutions:
   _MATTERMOST_WEBHOOK_URL: ${_MATTERMOST_WEBHOOK_URL}
+  _SERVICE_ACCOUNT_EMAIL: ${_SERVICE_ACCOUNT_EMAIL}

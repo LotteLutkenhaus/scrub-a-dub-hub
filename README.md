@@ -86,7 +86,7 @@ duty_assignments (
    - Set trigger to run on pushes to `main` branch
 
 2. **Configure Environment Variables**:
-   - In trigger settings, add substitution variable: `_MATTERMOST_WEBHOOK_URL`
+   - In trigger settings, add substitution variables: `_MATTERMOST_WEBHOOK_URL` and `_SERVICE_ACCOUNT_EMAIL`.
    - Set the value to your Mattermost webhook URL
 
 Now pushing to `main` automatically deploys both Cloud Run functions (`assign-coffee-duty` and `assign-fridge-duty`).
