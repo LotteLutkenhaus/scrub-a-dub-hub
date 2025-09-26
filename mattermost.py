@@ -4,39 +4,71 @@ import random
 
 import requests
 
+from models import DutyType
+
 MATTERMOST_WEBHOOK_URL = os.environ.get("MATTERMOST_WEBHOOK_URL")
 
 logger = logging.getLogger(__name__)
 
+COFFEE_GREETINGS = [
+    "Hey team!",
+    "Good afternoon, coffee lovers!",
+    "Your biweekly coffee reminder is here!",
+    "Hello everyone!",
+    "Time for our coffee care update!",
+    "Happy coffee week!",
+    "Ready for a fresh brew?",
+    "Greetings, coffee crew!",
+]
 
-def send_mattermost_coffee_webhook(username, test_mode=True):
-    """
-    Sends a message to the configured Mattermost incoming webhook, for the coffee bot.
-    """
+FRIDGE_GREETINGS = [
+    "Hey team!",
+    "Good afternoon, hungry folks!",
+    "Your monthly fridge reminder is here!",
+    "Hello everyone!",
+    "Time for our fridge care update!",
+    "Happy fridge cleaning day!",
+    "Ready for a fresh fridge?",
+    "Fridge cleaning time!",
+    "Hello, clean fridge champions!",
+]
 
-    greetings = ["Hey team!",
-                 "Good afternoon, coffee lovers!",
-                 "Your biweekly coffee reminder is here!",
-                 "Hello everyone!",
-                 "Time for our coffee care update!",
-                 "Happy coffee week!",
-                 "Ready for a fresh brew?",
-                 "Greetings, coffee crew!"]
+
+def configure_and_send_mattermost_webhook(username: str, duty_type: DutyType, test_mode: bool = True) -> bool:
+    """
+    Build and send a message to the configured Mattermost incoming webhook.
+    """
+    if duty_type == DutyType.COFFEE:
+        greetings = COFFEE_GREETINGS
+        machine_to_clean = "coffee machine"
+        emoji = "✨"
+    elif duty_type == DutyType.FRIDGE:
+        greetings = FRIDGE_GREETINGS
+        machine_to_clean = "fridge"
+        emoji = "🧼"
+    else:
+        raise ValueError("Unsupported duty type for Mattermost")
 
     if test_mode is True:
-        message = (f"☕️ {random.choice(greetings)} ☕️\nIt's {username}'s turn to clean the coffee "
-                   f"machine this week! ✨ Click [here](https://clean-office-command-center.vercel.app/) "
-                   f"for instructions, and to mark the job as completed.")
+        message = (
+            f"☕️ {random.choice(greetings)} ☕️\nIt's {username}'s turn to clean the "
+            f"{machine_to_clean} this week! {emoji} Click "
+            f"[here](https://clean-office-command-center.vercel.app/) for instructions, and "
+            f"to mark the job as completed."
+        )
 
     else:
-        message = (f"☕️ {random.choice(greetings)} ☕️\nIt's @{username}'s turn to clean the coffee "
-                   f"machine this week! ✨ Click [here](https://clean-office-command-center.vercel.app/) "
-                   f"for instructions, and to mark the job as completed.")
+        message = (
+            f"☕️ {random.choice(greetings)} ☕️\nIt's @{username}'s turn to clean the "
+            f"{machine_to_clean} this week! {emoji} Click "
+            f"[here](https://clean-office-command-center.vercel.app/) for instructions, and "
+            f"to mark the job as completed."
+        )
 
     payload = {
         "text": message,
         "icon_url": "https://storage.cloud.google.com/public-images-java-janitor/java-janitor.png",
-        "username": "Java Janitor"
+        "username": "Java Janitor",
     }
 
     if test_mode is True:
@@ -46,39 +78,6 @@ def send_mattermost_coffee_webhook(username, test_mode=True):
 
     return send_mattermost_webhook(username, payload)
 
-def send_mattermost_fridge_webhook(username, test_mode=True):
-    """
-    Sends a message to the configured Mattermost incoming webhook, for the fridge bot.
-    """
-
-    greetings = ["Hey team!",
-                "Good afternoon, hungry folks!",
-                "Your monthly fridge reminder is here!",
-                "Hello everyone!",
-                "Time for our fridge care update!",
-                "Happy fridge cleaning day!",
-                "Ready for a fresh fridge?",
-                "Fridge cleaning time!",
-                "Hello, clean fridge champions!"]
-
-    if test_mode is True:
-        message = (f"☕️ {random.choice(greetings)} :soap: \nIt's {username}'s turn to clean the fridge "
-                   f"this week! ✨ Click [here](https://clean-office-command-center.vercel.app/) "
-                   f"for instructions, and to mark the job as completed.")
-
-    else:
-        message = (f"☕️ {random.choice(greetings)} :soap: It's @{username}'s turn to clean the fridge "
-                   f"this week! ✨ Click [here](https://clean-office-command-center.vercel.app/) "
-                   f"for instructions, and to mark the job as completed.")
-
-    payload = {
-        "text": message,
-        "icon_url": "https://storage.cloud.google.com/public-images-java-janitor/fridge-warden.jpg",
-        "username": "Fridge Warden",
-        "channel": "@lotte_lutkenhaus" if test_mode is True else "nycoffice",
-    }
-
-    return send_mattermost_webhook(username, payload)
 
 def send_mattermost_webhook(username, payload):
     """

@@ -16,7 +16,7 @@ Base = declarative_base()
 
 
 class MemberTable(Base):
-    __tablename__ = 'members'
+    __tablename__ = "members"
 
     id = Column(Integer, primary_key=True)
     username = Column(String(50), unique=True, nullable=False)
@@ -26,10 +26,10 @@ class MemberTable(Base):
 
 
 class DutyAssignmentTable(Base):
-    __tablename__ = 'duty_assignments'
+    __tablename__ = "duty_assignments"
 
     id = Column(Integer, primary_key=True)
-    member_id = Column(Integer, ForeignKey('members.id'), nullable=False)
+    member_id = Column(Integer, ForeignKey("members.id"), nullable=False)
     duty_type = Column(String(20), nullable=False)
     assigned_at = Column(DateTime, server_default=func.now())
     cycle_id = Column(Integer, nullable=False)
@@ -65,8 +65,7 @@ def get_db_session(test_mode: bool = False) -> Generator[Session, Any, None]:
         session.close()
 
 
-def get_office_members(coffee_drinkers_only: bool = False, test_mode: bool = False) -> List[
-    OfficeMember]:
+def get_office_members(coffee_drinkers_only: bool = False, test_mode: bool = False) -> List[OfficeMember]:
     """
     Fetch office members from database.
     """
@@ -87,20 +86,23 @@ def get_current_cycle_info(duty_type: DutyType, test_mode: bool = False) -> Cycl
     """
     with get_db_session(test_mode) as session:
         # Get the current cycle ID
-        current_cycle = session.query(func.max(DutyAssignmentTable.cycle_id)).filter(
-            DutyAssignmentTable.duty_type == duty_type
-        ).scalar() or 0
+        current_cycle = (
+            session.query(func.max(DutyAssignmentTable.cycle_id))
+            .filter(DutyAssignmentTable.duty_type == duty_type)
+            .scalar()
+            or 0
+        )
 
         # Get assigned user IDs in current cycle
-        assigned_ids = session.query(DutyAssignmentTable.member_id).filter(
-            DutyAssignmentTable.duty_type == duty_type,
-            DutyAssignmentTable.cycle_id == current_cycle
-        ).distinct().all()
+        assigned_ids = (
+            session.query(DutyAssignmentTable.member_id)
+            .filter(DutyAssignmentTable.duty_type == duty_type, DutyAssignmentTable.cycle_id == current_cycle)
+            .distinct()
+            .all()
+        )
 
         return CycleInfo(
-            cycle_id=current_cycle,
-            duty_type=duty_type,
-            assigned_member_ids={row[0] for row in assigned_ids}
+            cycle_id=current_cycle, duty_type=duty_type, assigned_member_ids={row[0] for row in assigned_ids}
         )
 
 
@@ -110,23 +112,22 @@ def start_new_cycle(duty_type: DutyType, test_mode: bool = False) -> CycleInfo:
     """
     with get_db_session(test_mode) as session:
         # Get the current max cycle ID
-        current_max = session.query(func.max(DutyAssignmentTable.cycle_id)).filter(
-            DutyAssignmentTable.duty_type == duty_type
-        ).scalar() or 0
+        current_max = (
+            session.query(func.max(DutyAssignmentTable.cycle_id))
+            .filter(DutyAssignmentTable.duty_type == duty_type)
+            .scalar()
+            or 0
+        )
 
         new_cycle_id = current_max + 1
         logger.info(f"Started new cycle {new_cycle_id} for {duty_type}")
 
-        return CycleInfo(
-            cycle_id=new_cycle_id,
-            duty_type=duty_type,
-            assigned_member_ids=set()
-        )
+        return CycleInfo(cycle_id=new_cycle_id, duty_type=duty_type, assigned_member_ids=set())
 
 
-def record_duty_assignment(member_id: int, username: str, duty_type: DutyType,
-                           cycle_id: int | None = None,
-                           test_mode: bool = False) -> AssignmentResult:
+def record_duty_assignment(
+    member_id: int, username: str, duty_type: DutyType, cycle_id: int | None = None, test_mode: bool = False
+) -> AssignmentResult:
     """
     Record a duty assignment in the database.
     """
@@ -134,20 +135,18 @@ def record_duty_assignment(member_id: int, username: str, duty_type: DutyType,
         with get_db_session(test_mode) as session:
             # If no cycle_id provided, get the current one
             if cycle_id is None:
-                cycle_id = session.query(func.max(DutyAssignmentTable.cycle_id)).filter(
-                    DutyAssignmentTable.duty_type == duty_type
-                ).scalar() or 1
+                cycle_id = (
+                    session.query(func.max(DutyAssignmentTable.cycle_id))
+                    .filter(DutyAssignmentTable.duty_type == duty_type)
+                    .scalar()
+                    or 1
+                )
 
             # Create new assignment
-            assignment_record = DutyAssignmentTable(
-                member_id=member_id,
-                duty_type=duty_type,
-                cycle_id=cycle_id
-            )
+            assignment_record = DutyAssignmentTable(member_id=member_id, duty_type=duty_type, cycle_id=cycle_id)
             session.add(assignment_record)
             session.commit()
-            logger.info(
-                f"Recorded {duty_type} assignment for {username} (ID: {member_id}) in cycle {cycle_id}")
+            logger.info(f"Recorded {duty_type} assignment for {username} (ID: {member_id}) in cycle {cycle_id}")
 
             return AssignmentResult(
                 success=True,
