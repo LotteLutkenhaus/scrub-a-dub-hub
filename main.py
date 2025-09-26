@@ -17,12 +17,11 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def is_coffee_execution_week():
+def is_coffee_execution_week(date: datetime.date):
     """
-    Determines if current week is odd (coffee duty week).
+    Determines if given date's week is odd (coffee duty week).
     """
-    today = datetime.date.today()
-    iso_week_number = today.isocalendar()[1]
+    iso_week_number = date.isocalendar()[1]
     is_current_week_odd = (iso_week_number % 2 == 1)
     logger.info(
         f"Week number {iso_week_number} is {'odd' if is_current_week_odd else 'even'} "
@@ -31,15 +30,14 @@ def is_coffee_execution_week():
     return is_current_week_odd
 
 
-def is_fridge_execution_week():
+def is_fridge_execution_week(date: datetime.date):
     """
-    Determines if this is the last Wednesday of the month.
+    Determines if the given date is the last Wednesday of the month.
     """
-    today = datetime.date.today()
-    next_week = today + datetime.timedelta(days=7)
-    is_last_wednesday = (today.month != next_week.month)
+    next_week = date + datetime.timedelta(days=7)
+    is_last_wednesday = (date.month != next_week.month)
     logger.info(
-        f"{today} is {'the' if is_last_wednesday else 'not the'} last Wednesday "
+        f"{date} is {'the' if is_last_wednesday else 'not the'} last Wednesday "
         f"of the month so {'we are' if is_last_wednesday else 'not'} executing fridge job"
     )
     return is_last_wednesday
@@ -124,7 +122,8 @@ def assign_coffee_duty(request):
     test_mode = request_json.get("test_mode", True)
 
     # Check if it's execution week
-    if not is_coffee_execution_week():
+    today = datetime.date.today()
+    if not is_coffee_execution_week(today):
         if test_mode:
             logger.info("Would not have assigned coffee duty this week.")
         else:
@@ -147,7 +146,8 @@ def assign_fridge_duty(request):
     test_mode = request_json.get("test_mode", True)
 
     # Check if it's execution week
-    if not is_fridge_execution_week():
+    today = datetime.date.today()
+    if not is_fridge_execution_week(today):
         if test_mode:
             logger.info("Would not have assigned fridge duty this week.")
         else:
