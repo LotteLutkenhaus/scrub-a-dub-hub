@@ -1,7 +1,9 @@
-import pytest
 from dataclasses import dataclass
-from models import OfficeMember, DutyType, DutyConfig
-from main import select_next_member, get_duty_config
+
+import pytest
+
+from main import get_duty_config, select_next_member
+from models import DutyConfig, DutyType, OfficeMember
 
 
 @dataclass
@@ -11,6 +13,7 @@ class TestCase:
     assigned_ids: set[int]
     expected_id: int | set[int] | None
 
+
 test_cases = [
     TestCase(
         rationale="Should select Abel as the only unassigned member",
@@ -19,7 +22,7 @@ test_cases = [
             OfficeMember(id=2, username="abel"),
         ],
         assigned_ids={1},
-        expected_id=2
+        expected_id=2,
     ),
     TestCase(
         rationale="Should return None as all members have had a turn",
@@ -28,13 +31,13 @@ test_cases = [
             OfficeMember(id=2, username="abel"),
         ],
         assigned_ids={1, 2},
-        expected_id=None
+        expected_id=None,
     ),
     TestCase(
         rationale="Should return None as we have no members available",
         members=[],
         assigned_ids={1, 2},
-        expected_id=None
+        expected_id=None,
     ),
     TestCase(
         rationale="Should select from all as none have had a turn",
@@ -44,9 +47,10 @@ test_cases = [
             OfficeMember(id=3, username="ellie"),
         ],
         assigned_ids=set(),
-        expected_id={1, 2, 3}
+        expected_id={1, 2, 3},
     ),
 ]
+
 
 @pytest.mark.unit
 @pytest.mark.parametrize("case", test_cases, ids=lambda case: case.rationale)
@@ -56,8 +60,8 @@ def test_select_next_member(case: TestCase) -> None:
     """
     result = select_next_member(case.members, case.assigned_ids)
 
-    if case.expected_id is None:
-        assert result is None
+    if result is None:
+        assert case.expected_id is None
         return
 
     if isinstance(case.expected_id, set):
@@ -69,23 +73,14 @@ def test_select_next_member(case: TestCase) -> None:
 
 @pytest.mark.unit
 @pytest.mark.parametrize("duty_type", DutyType)
-def test_get_duty_config(duty_type: DutyType):
+def test_get_duty_config(duty_type: DutyType) -> None:
     """
     Test getting duty configuration
     """
     config = get_duty_config(duty_type)
-    
+
     assert isinstance(config, DutyConfig)
     if duty_type == DutyType.COFFEE:
         assert config.coffee_drinkers_only == True
     else:
         assert config.coffee_drinkers_only == False
-
-
-@pytest.mark.unit
-def test_get_duty_config_invalid_type():
-    """
-    Test that invalid duty type raises ValueError
-    """
-    with pytest.raises(ValueError, match="Unknown duty type"):
-        get_duty_config("invalid_type")

@@ -1,21 +1,22 @@
 import logging
-from typing import List, Optional, Any, Generator
+from collections.abc import Generator
 from contextlib import contextmanager
-from datetime import datetime
-from sqlalchemy import create_engine, Column, Integer, String, Boolean, DateTime, ForeignKey
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, Session
+from typing import Any
+
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String, create_engine
+from sqlalchemy.ext.declarative import DeclarativeMeta, declarative_base
+from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.sql import func
 
 from google_utils import get_secret
-from models import OfficeMember, DutyAssignment, DutyType, CycleInfo, AssignmentResult
+from models import AssignmentResult, CycleInfo, DutyType, OfficeMember
 
 logger = logging.getLogger(__name__)
 
-Base = declarative_base()
+Base: DeclarativeMeta = declarative_base()
 
 
-class MemberTable(Base):
+class MemberTable(Base):  # type: ignore[valid-type,misc]
     __tablename__ = "members"
 
     id = Column(Integer, primary_key=True)
@@ -25,7 +26,7 @@ class MemberTable(Base):
     active = Column(Boolean, default=True)
 
 
-class DutyAssignmentTable(Base):
+class DutyAssignmentTable(Base):  # type: ignore[valid-type,misc]
     __tablename__ = "duty_assignments"
 
     id = Column(Integer, primary_key=True)
@@ -65,7 +66,7 @@ def get_db_session(test_mode: bool = False) -> Generator[Session, Any, None]:
         session.close()
 
 
-def get_office_members(coffee_drinkers_only: bool = False, test_mode: bool = False) -> List[OfficeMember]:
+def get_office_members(coffee_drinkers_only: bool = False, test_mode: bool = False) -> list[OfficeMember]:
     """
     Fetch office members from database.
     """

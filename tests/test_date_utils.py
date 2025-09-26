@@ -1,4 +1,5 @@
 import datetime
+
 import pytest
 
 from main import is_coffee_execution_week, is_fridge_execution_week
@@ -14,7 +15,7 @@ from main import is_coffee_execution_week, is_fridge_execution_week
         (datetime.date(2023, 12, 27), False),  # Week 52 (even) - Wednesday
     ],
 )
-def test_coffee_execution_week(test_date, expected):
+def test_coffee_execution_week(test_date: datetime.date, expected: bool) -> None:
     assert is_coffee_execution_week(test_date) == expected
 
 
@@ -30,5 +31,5 @@ def test_coffee_execution_week(test_date, expected):
         (datetime.date(2024, 6, 18), False),  # Not last Wednesday of December
     ],
 )
-def test_fridge_execution_week(test_date, expected):
+def test_fridge_execution_week(test_date: datetime.date, expected: bool) -> None:
     assert is_fridge_execution_week(test_date) == expected

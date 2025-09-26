@@ -3,18 +3,19 @@ import logging
 import random
 
 import functions_framework
+from flask import Request
 
-from database import get_office_members, get_current_cycle_info, start_new_cycle, record_duty_assignment
-from models import OfficeMember, DutyType, DutyConfig
+from database import get_current_cycle_info, get_office_members, record_duty_assignment, start_new_cycle
 from mattermost import (
     configure_and_send_mattermost_webhook,
 )
+from models import DutyConfig, DutyType, OfficeMember
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def is_coffee_execution_week(date: datetime.date):
+def is_coffee_execution_week(date: datetime.date) -> bool:
     """
     Determines if given date's week is odd (coffee duty week).
     """
@@ -27,7 +28,7 @@ def is_coffee_execution_week(date: datetime.date):
     return is_current_week_odd
 
 
-def is_fridge_execution_week(date: datetime.date):
+def is_fridge_execution_week(date: datetime.date) -> bool:
     """
     Determines if the given date is the last Wednesday of the month.
     """
@@ -68,7 +69,7 @@ def select_next_member(members: list[OfficeMember], assigned_member_ids: set[int
     return member_lookup[selected_user_id]
 
 
-def _assign_duty(duty_type: DutyType, test_mode: bool = False):
+def _assign_duty(duty_type: DutyType, test_mode: bool = False) -> tuple[dict[str, str], int]:
     """
     Assign a duty, track it in the database, and send a notification on Mattermost.
     """
@@ -119,7 +120,7 @@ def _assign_duty(duty_type: DutyType, test_mode: bool = False):
 
 
 @functions_framework.http
-def assign_coffee_duty(request):
+def assign_coffee_duty(request: Request) -> tuple[str, int] | tuple[dict[str, str], int]:
     """
     HTTP Cloud Function for assigning coffee machine cleaning duty.
     Expected payload: {"test_mode": true | false}
@@ -143,7 +144,7 @@ def assign_coffee_duty(request):
 
 
 @functions_framework.http
-def assign_fridge_duty(request):
+def assign_fridge_duty(request: Request) -> tuple[str, int] | tuple[dict[str, str], int]:
     """
     HTTP Cloud Function for assigning fridge cleaning duty.
     Expected payload: {"test_mode": true | false}

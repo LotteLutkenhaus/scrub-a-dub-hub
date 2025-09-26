@@ -79,7 +79,7 @@ def configure_and_send_mattermost_webhook(username: str, duty_type: DutyType, te
     return send_mattermost_webhook(username, payload)
 
 
-def send_mattermost_webhook(username, payload):
+def send_mattermost_webhook(username: str, payload: dict[str, str]) -> bool:
     """
     Sends a message to the configured Mattermost incoming webhook.
     """
