@@ -44,21 +44,27 @@ test_cases = [
             OfficeMember(id=3, username="ellie"),
         ],
         assigned_ids=set(),
-        expected_id={1, 2, 3}  # Can be any of 1, 2, 3
+        expected_id={1, 2, 3}
     ),
 ]
 
 @pytest.mark.unit
 @pytest.mark.parametrize("case", test_cases, ids=lambda case: case.rationale)
-def test_select_next_member(case: TestCase):
+def test_select_next_member(case: TestCase) -> None:
     """
     Test member selection logic
     """
     result = select_next_member(case.members, case.assigned_ids)
+
+    if case.expected_id is None:
+        assert result is None
+        return
+
     if isinstance(case.expected_id, set):
-        assert result in case.expected_id
-    else:
-        assert result == case.expected_id
+        assert result.id in case.expected_id
+        return
+
+    assert result.id == case.expected_id
 
 
 @pytest.mark.unit
