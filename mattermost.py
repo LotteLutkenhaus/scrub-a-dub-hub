@@ -41,7 +41,7 @@ def configure_and_send_mattermost_webhook(username: str, duty_type: DutyType, te
     if duty_type == DutyType.COFFEE:
         greetings = COFFEE_GREETINGS
         machine_to_clean = "coffee machine"
-        emoji = "✨"
+        emoji = "☕"
     elif duty_type == DutyType.FRIDGE:
         greetings = FRIDGE_GREETINGS
         machine_to_clean = "fridge"
