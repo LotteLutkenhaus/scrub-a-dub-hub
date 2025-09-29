@@ -51,16 +51,16 @@ def configure_and_send_mattermost_webhook(username: str, duty_type: DutyType, te
 
     if test_mode is True:
         message = (
-            f"☕️ {random.choice(greetings)} ☕️\nIt's {username}'s turn to clean the "
-            f"{machine_to_clean} this week! {emoji} Click "
+            f"{emoji} {random.choice(greetings)} {emoji}\nIt's {username}'s turn to clean the "
+            f"{machine_to_clean} this week! ✨ Click "
             f"[here](https://clean-office-command-center.vercel.app/) for instructions, and "
             f"to mark the job as completed."
         )
 
     else:
         message = (
-            f"☕️ {random.choice(greetings)} ☕️\nIt's @{username}'s turn to clean the "
-            f"{machine_to_clean} this week! {emoji} Click "
+            f"{emoji} {random.choice(greetings)} {emoji}\nIt's @{username}'s turn to clean the "
+            f"{machine_to_clean} this week! ✨ Click "
             f"[here](https://clean-office-command-center.vercel.app/) for instructions, and "
             f"to mark the job as completed."
         )
