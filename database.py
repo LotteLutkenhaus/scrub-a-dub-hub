@@ -34,6 +34,8 @@ class DutyAssignmentTable(Base):  # type: ignore[valid-type,misc]
     duty_type = Column(String(20), nullable=False)
     assigned_at = Column(DateTime, server_default=func.now())
     cycle_id = Column(Integer, nullable=False)
+    completed = Column(Boolean, default=False)
+    completed_at = Column(DateTime, nullable=True)
 
 
 def get_database_url(test_mode: bool = False) -> str:
