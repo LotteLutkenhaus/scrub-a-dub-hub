@@ -55,7 +55,7 @@ def test_select_next_member(case: TestCase):
     Test member selection logic
     """
     result = select_next_member(case.members, case.assigned_ids)
-    if len(case.expected_id) > 1:
+    if isinstance(case.expected_id, set):
         assert result in case.expected_id
     else:
         assert result == case.expected_id
