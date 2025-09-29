@@ -1,5 +1,7 @@
 from datetime import datetime
+from dataclasses import dataclass
 from enum import StrEnum
+from typing import Callable
 from pydantic import BaseModel
 
 
@@ -33,3 +35,9 @@ class CycleInfo(BaseModel):
 class AssignmentResult(BaseModel):
     success: bool
     message: str
+
+
+@dataclass
+class DutyConfig:
+    coffee_drinkers_only: bool
+    duty_name: str
